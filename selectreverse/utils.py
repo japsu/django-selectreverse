@@ -31,9 +31,9 @@ class ReverseManager(models.Manager):
         return ReverseQuerySet(model=self.model, reversemapping=reversemapping)
 
 class ReverseQuerySet(models.query.QuerySet):
-    def __init__(self, model=None, query=None, reversemapping=None):
+    def __init__(self, model=None, query=None, reversemapping=None, **kwargs):
         self.reversemapping = reversemapping or {}
-        super(ReverseQuerySet, self).__init__(model, query)
+        super(ReverseQuerySet, self).__init__(model, query, **kwargs)
 
     def _clone(self, klass=None, setup=False, **kwargs):
         c = super(ReverseQuerySet, self)._clone(klass=klass, setup=setup, **kwargs)
