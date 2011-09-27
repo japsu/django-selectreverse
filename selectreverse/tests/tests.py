@@ -21,7 +21,7 @@ class Test_m2m(test.TestCase):
             a.owners.add(o)
 
             for j in range(5):
-                b = test_models.Appartment(building=a,   number = i*10+j)
+                b = test_models.Apartment(building=a,   number = i*10+j)
                 b.save()
                 c = test_models.Parking(building=a,  number=i*10+j)
                 c.save()
@@ -36,7 +36,7 @@ class Test_m2m(test.TestCase):
     def test_reverseFK(self):
         reset_queries()
         for item in test_models.Building.objects.all():
-            for x in item.appartment_set.all():
+            for x in item.apartment_set.all():
                 a = x.number
             for x in item.parking_set.all():
                 a = x.number
@@ -45,15 +45,15 @@ class Test_m2m(test.TestCase):
         reset_queries()
         # all includes all default mappings, as defined in the manager initialisation
         for item in test_models.Building.reversemanager.all():
-            for x in getattr(item,  'appartments'):
+            for x in getattr(item,  'apartments'):
                 a = x.number
             for x in getattr(item,  'parkings'):
                 a = x.number
         self.assertEqual(len(connection.queries), 4)
 
         reset_queries()
-        for item in test_models.Building.reversemanager.select_reverse({'appartments': 'appartment_set'}):
-            for x in getattr(item,  'appartments'):
+        for item in test_models.Building.reversemanager.select_reverse({'apartments': 'apartment_set'}):
+            for x in getattr(item,  'apartments'):
                 a = x.number
         self.assertEqual(len(connection.queries), 2)
 
@@ -159,8 +159,8 @@ class Test_generic(test.TestCase):
 class Test_template(Test_m2m):
     def test_template(self):
         reset_queries()
-        d = {'buildings': test_models.Building.reversemanager.select_reverse({'appartments': 'appartment_set'})}
-        t = Template("{% for item in buildings %}{% for appartment in item.appartments %}{{ appartment }}{% endfor %}{% endfor %}")
+        d = {'buildings': test_models.Building.reversemanager.select_reverse({'apartments': 'apartment_set'})}
+        t = Template("{% for item in buildings %}{% for apartment in item.apartments %}{{ apartment }}{% endfor %}{% endfor %}")
         response = t.render(Context(d))
         self.assertEqual(len(response), 245)
         self.assertEqual(len(connection.queries), 2)

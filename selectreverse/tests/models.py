@@ -8,9 +8,9 @@ class Building(models.Model):
     owners = models.ManyToManyField('Owner')
     
     objects = models.Manager()
-    reversemanager = ReverseManager({'appartments': 'appartment_set',  'parkings': 'parking_set',  'xowners': 'owners'})
+    reversemanager = ReverseManager({'apartments': 'apartment_set',  'parkings': 'parking_set',  'xowners': 'owners'})
 
-class Appartment(models.Model):
+class Apartment(models.Model):
     number = models.IntegerField()
     building = models.ForeignKey(Building)
 
