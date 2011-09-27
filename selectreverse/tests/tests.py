@@ -5,6 +5,7 @@ from django.conf import settings
 import selectreverse.tests.models as test_models
 from django.db import connection,  reset_queries
 from django.core.exceptions import ImproperlyConfigured
+from django.template import Context, Template
 
 class Test_m2m(test.TestCase):
     def setUp(self):
@@ -155,3 +156,12 @@ class Test_generic(test.TestCase):
                 a = x.tag
         self.assertEqual(len(connection.queries), 2)
 
+class Test_template(Test_m2m):
+    def test_template(self):
+        reset_queries()
+        d = {'buildings': test_models.Building.reversemanager.select_reverse({'appartments': 'appartment_set'})}
+        t = Template("{% for item in buildings %}{% for appartment in item.appartments %}{{ appartment }}{% endfor %}{% endfor %}")
+        response = t.render(Context(d))
+        self.assertEqual(len(response), 245)
+        self.assertEqual(len(connection.queries), 2)
+    

@@ -92,5 +92,9 @@ class ReverseQuerySet(models.query.QuerySet):
             for k, v in reversemapping.iteritems():
                 setattr(item, k, target_maps[k].get(item.pk,[]))
 
+    def __len__(self):
+        if self._result_cache is None:
+            list(self) # force the cache creation, is there a better way ?
+        return len(self._result_cache)
 
 

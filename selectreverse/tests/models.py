@@ -14,6 +14,8 @@ class Appartment(models.Model):
     number = models.IntegerField()
     building = models.ForeignKey(Building)
 
+    def __unicode__(self):
+        return u'%s' % self.number
 
 class Parking(models.Model):
     number = models.IntegerField()
