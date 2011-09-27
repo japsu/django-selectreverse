@@ -8,6 +8,8 @@ Custom manager to reduce sql queries for m2m and reverse fk relationships
 from django.db import models
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor,  ReverseManyRelatedObjectsDescriptor,  ManyRelatedObjectsDescriptor
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import ReverseGenericRelatedObjectsDescriptor
 
 class ReverseManager(models.Manager):
     """
@@ -73,6 +75,15 @@ class ReverseQuerySet(models.query.QuerySet):
                 for item in rel.model.objects.filter(**{rel.field.name +'__in':ids}).all().extra( \
                             select={'main_id': rel.field.m2m_db_table() + '.' + rel.field.m2m_column_name()}):
                     target_map.setdefault(getattr(item, 'main_id'), []).append(item)
+                target_maps[k]=target_map
+            elif isinstance(descriptor, ReverseGenericRelatedObjectsDescriptor):
+                field = getattr(self.model, v).field
+                ct = ContentType.objects.get_for_model(self.model)
+                for item in field.rel.to.objects.filter(**{
+                        field.object_id_field_name+'__in':ids,
+                        field.content_type_field_name+'__exact':ct
+                    }).all():
+                    target_map.setdefault(getattr(item, field.object_id_field_name), []).append(item)
                 target_maps[k]=target_map
             else:
                 raise ImproperlyConfigured, "Unsupported mapping %s %s" % (v, descriptor)

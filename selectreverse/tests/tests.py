@@ -130,3 +130,28 @@ class Test_m2m(test.TestCase):
                 a = x.number
         self.assertEqual(len(connection.queries), 2)
 
+class Test_generic(test.TestCase):
+    def setUp(self):
+        settings.DEBUG = True
+
+        for i in range(10):
+            o = test_models.Bookmark(url='http://www.djangoproject.com/')
+            o.save()
+            for i in range(20):
+                a = test_models.TaggedItem(content_object=o, tag= str(i))
+                a.save()
+
+    def test_reverseGFK(self):
+        reset_queries()
+        for item in test_models.Bookmark.objects.all():
+            for x in item.tags.all():
+                a = x.tag
+        self.assertEqual(len(connection.queries), 11)
+
+        reset_queries()
+        # all includes all default mappings, as defined in the manager initialisation
+        for item in test_models.Bookmark.reversemanager.all():
+            for x in getattr(item,  'gtags'):
+                a = x.tag
+        self.assertEqual(len(connection.queries), 2)
+

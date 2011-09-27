@@ -21,6 +21,7 @@ elif test_engine == "postgresql_psycopg2":
 
 
 INSTALLED_APPS = (
+    'django.contrib.contenttypes',
     'selectreverse',
     'selectreverse.tests',
 )
