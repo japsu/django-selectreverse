@@ -4,6 +4,13 @@ Django selectreverse
 
 This module contains a set of helpers to reduce the number of queries needed to access m2m relations or reverse foreign key relations.
 
+The original django-selectreverse is Copyright (C) 2009-2011 Koen Biermans and
+can be found at http://code.google.com/p/django-selectreverse/. Licensed under
+the New BSD License, see COPYING.
+
+Packaging is Copyright (C) 2012 Santtu Pajukanta and can be found at
+http://github.com/japsu/django-selectreverse.
+
 Introduction
 ------------
 
